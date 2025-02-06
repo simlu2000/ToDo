@@ -10,13 +10,18 @@ import {
   Fab,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import './style/home_style.css';
 
 
 function App() {
   const [openDialogAddTask, setOpenDialogAddTask] = useState(false);
-
+  const [tasks, setTasks] = useState([]);
   function handleClick(param) {
     setOpenDialogAddTask(param);
+  }
+
+  const addTask = (newTask) => {
+    setTasks((prevTasks) => [...prevTasks, newTask]);
   }
   return (
     <Router>
@@ -28,7 +33,16 @@ function App() {
         <Route path="/login" element={<LoginScreen />} />
       </Routes>
       <Typography variant="h2" sx={{ marginLeft: '2%', marginTop: '2%' }}>Hi User, these are your tasks:</Typography>
-      <Typography variant="h2" sx={{ marginLeft: '2%', marginTop: '2%' }}>Add a Task</Typography>
+
+      <div id="tasksBox">
+        {tasks.map((task, index) => (
+          <div key={index} id="task">
+            <Typography variant="h6">{task.title}</Typography>
+            <Typography variant="body2">Date:  Date: {task.date ? task.date.format('YYYY-MM-DD') : 'No date selected'}</Typography>
+            <Typography variant="body2">Category: {task.category}</Typography>
+          </div>
+        ))}
+      </div>
 
       <Fab
         aria-label="add"
@@ -46,6 +60,7 @@ function App() {
         <DialogAddTask
           open={openDialogAddTask}
           onClose={() => setOpenDialogAddTask(false)}
+          addTask={addTask}
           
         />
       )}

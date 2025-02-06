@@ -1,0 +1,20 @@
+#tasksBox{
+    width:50%;
+    margin-left:2%;
+    background-color: #DF2935;
+    display:flex;
+    align-items: flex-start;
+    flex-direction:row;
+    border-radius:25px;
+    margin-top:2%;
+    color:#000000;
+}
+#task{
+    background-color: #FCFCFC;
+    margin:5% auto;
+    border-radius:25px;
+    padding:15px;
+    width:15%;
+    min-height:100px;
+
+}

@@ -18,13 +18,25 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
-function DialogAddTask({ open, onClose }) {
+function DialogAddTask({ open, onClose, addTask }) {
+    const [taskTitle, setTaskTitle] = useState("");
     const [taskDate, setTaskDate] = useState(dayjs());
     const [taskCategory, setTaskCategory] = useState("");
     const categories = ["Work", "Personal", "Shopping", "Study", "Health", "Other"];
     const handleSelectCategory = (category) => {
         setTaskCategory(category);
     }
+
+    const handleAddTask = () => {
+        if (taskTitle && taskDate && taskCategory) {
+            const newTask = { title: taskTitle, date: taskDate, category: taskCategory };
+            addTask(newTask);
+            setTaskTitle('');
+            setTaskDate(dayjs());
+            setTaskCategory('');
+            onClose();
+        }
+    };
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -37,6 +49,7 @@ function DialogAddTask({ open, onClose }) {
                     '& .MuiDialog-paper': {  //style for dialog wrap
                         width: '800px',
                         height: '600px',
+                        borderRadius: '25px'
                     }
                 }}>
                 <DialogTitle>
@@ -52,7 +65,8 @@ function DialogAddTask({ open, onClose }) {
                         label="Task"
                         type="text"
                         fullWidth
-                        variant="outlined">
+                        variant="outlined"
+                        onChange={(e) => setTaskTitle(e.target.value)}>
                     </TextField>
                     <DatePicker
                         label="Select the date"
@@ -76,8 +90,10 @@ function DialogAddTask({ open, onClose }) {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={onClose}>Cancel</Button>
-                    <Button onClick={onClose}>Add</Button>
+                    <Button onClick={onClose} sx={{ color: "#DF2935" }}>Cancel</Button>
+                    <Button onClick={handleAddTask} sx={{ color: "#FCFCFC", backgroundColor: "#DF2935", marginRight: "4%", borderRadius: '25px' }}>
+                        Add
+                    </Button>
                 </DialogActions>
             </Dialog>
         </LocalizationProvider>
