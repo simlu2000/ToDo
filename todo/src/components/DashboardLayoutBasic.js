@@ -25,7 +25,7 @@ import {
   Fab,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-
+import DateCalendarServerRequest from './DateCalendarServerRequest'
 const NAVIGATION = [
   {
     kind: 'header',
@@ -242,7 +242,12 @@ export default function DashboardLayoutBasic(props) {
                   {tasks.map((task, index) => (
                     <div key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
                       <div id="taskState">
-                        <input className="state-btn" type="checkbox" onChange={() => handleCompleted(task)} />
+                        <input className="state-btn" type="checkbox" sx={{
+                          '&.Mui-checked': {
+                            color: '#FFFFFF',
+                          },
+                          color: '#FFFFFF',
+                        }} onChange={() => handleCompleted(task)} />
                       </div>
                       <div className="task-data">
                         <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
@@ -254,6 +259,10 @@ export default function DashboardLayoutBasic(props) {
                 </div>
               )
             )}
+          </div>
+
+          <div>
+            <DateCalendarServerRequest/>
           </div>
         </PageContainer>
 
