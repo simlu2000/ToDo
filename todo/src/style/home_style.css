@@ -1,22 +1,24 @@
 .box {
-    width: 45%;
+    width: 100%;
     margin-left: 2%;
-    background-color: rgba(42, 68, 76, 0.512);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(10px);
     display: flex;
     align-items: flex-start;
     flex-direction: column;
     border-radius: 25px;
-    margin-top: 2%;
     color: #FFFFFF;
 }
-
-#task {
+.box-dark{
     background-color: rgba(42, 68, 76, 0.512);
+}
+.box-light{
+    background-color: rgba(52, 179, 219);
+}
+.task {
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(10px);
-    margin: 2% auto;
+    margin: 1% auto;
     border-radius: 25px;
     padding: 15px;
     width: 80%;
@@ -24,16 +26,24 @@
     align-items: flex-start;
     flex-direction: row;
 }
+.task-dark{
+    background-color: rgba(42, 68, 76, 0.512);
+}
+.task-light{
+    background-color: rgba(33, 121, 147, 0.256);
+}
 
 .state-btn {
     width: 2rem;
     height: 2rem;
+    margin-top:60%;
+    margin-left:5%;
 }
 .task-data{
-    margin-left:5%;
+    margin-left:2%;
 }
 
 .title {
     margin-left: 10%;
-    margin-top: 5%;
+    margin-top: 2%;
 }

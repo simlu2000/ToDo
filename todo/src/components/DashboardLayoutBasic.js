@@ -17,6 +17,7 @@ import PropTypes from 'prop-types';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
 import DialogAddTask from './DialogAddTask';
 import {
@@ -172,8 +173,8 @@ export default function DashboardLayoutBasic(props) {
   const [tasks, setTasks] = useState([]);
   const [openDialogAddTask, setOpenDialogAddTask] = useState(false);
   const router = useDemoRouter('/dashboard');
+  const theme = useTheme(); //ottengo tema corrente
 
-  // Remove this const when copying and pasting into your project.
   const demoWindow = window ? window() : undefined;
 
   function handleClick(param) {
@@ -201,7 +202,7 @@ export default function DashboardLayoutBasic(props) {
     if (savedTasks) setTasks(savedTasks);
   }, []);
 
-  
+
 
 
   return (
@@ -228,29 +229,34 @@ export default function DashboardLayoutBasic(props) {
 
         }}
       >
-        <PageContainer >
+        <PageContainer>
           <div>
-            {tasks.length === 0 ? (
-              <Typography variant="h4">No task available</Typography>
-            ) : (
-              <div className="box">
-                <div className="title"><Typography variant="h6">Today's tasks</Typography> </div>
-                {tasks.map((task, index) => (
-                  <div key={index} id="task">
-                    <div id="taskState">
-                      <input className="state-btn" type="checkbox" onChange={() => handleCompleted(task)} />
-                    </div>
-                    <div className="task-data">
-                      <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
-                      <Typography variant="body2">Date: {task.date ? task.date.format('YYYY-MM-DD') : 'No date selected'}</Typography>
-                      <Typography variant="body2">Category: {task.category}</Typography>
-                    </div>
+            {router.pathname === '/dashboard' && (
+              tasks.length === 0 ? (
+                <Typography variant="h5" color="#54D3DB">No task available</Typography>
+              ) : (
+                <div className={theme.palette.mode === "dark" ? "box box-dark" : "box box-light"}>
+                  <div className="title">
+                    <Typography variant="h6">Today's tasks</Typography>
                   </div>
-                ))}
-              </div>
+                  {tasks.map((task, index) => (
+                    <div key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
+                      <div id="taskState">
+                        <input className="state-btn" type="checkbox" onChange={() => handleCompleted(task)} />
+                      </div>
+                      <div className="task-data">
+                        <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
+                        <Typography variant="body2">Date: {task.date ? task.date.format('YYYY-MM-DD') : 'No date selected'}</Typography>
+                        <Typography variant="body2">Category: {task.category}</Typography>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
             )}
           </div>
         </PageContainer>
+
 
         <Fab
           aria-label="add"
