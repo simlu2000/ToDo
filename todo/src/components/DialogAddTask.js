@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Typography,
     Dialog,
@@ -30,6 +30,7 @@ function DialogAddTask({ open, onClose, addTask }) {
     const handleAddTask = () => {
         if (taskTitle && taskDate && taskCategory) {
             const newTask = { title: taskTitle, date: taskDate, category: taskCategory };
+            console.log(newTask);
             addTask(newTask);
             setTaskTitle('');
             setTaskDate(dayjs());
@@ -47,8 +48,8 @@ function DialogAddTask({ open, onClose, addTask }) {
                 maxWidth="md" //available options: xs, sm, md, lg, xl
                 sx={{
                     '& .MuiDialog-paper': {  //style for dialog wrap
-                        width: '800px',
-                        height: '600px',
+                        width: 'auto',
+                        height: 'auto',
                         borderRadius: '25px'
                     }
                 }}>
@@ -90,8 +91,8 @@ function DialogAddTask({ open, onClose, addTask }) {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={onClose} sx={{ color: "#DF2935" }}>Cancel</Button>
-                    <Button onClick={handleAddTask} sx={{ color: "#FCFCFC", backgroundColor: "#DF2935", marginRight: "4%", borderRadius: '25px' }}>
+                    <Button onClick={onClose} sx={{ color: "#34B3DB" }}>Cancel</Button>
+                    <Button onClick={handleAddTask} sx={{ color: "#FCFCFC", backgroundColor: "#34B3DB", marginRight: "4%", borderRadius: '25px' }}>
                         Add
                     </Button>
                 </DialogActions>

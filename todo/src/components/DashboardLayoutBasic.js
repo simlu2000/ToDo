@@ -14,10 +14,17 @@ import todoLogo from '../utils/TODO.png';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
-import Typography from '@mui/material/Typography';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import { useState, useEffect } from 'react';
+import DialogAddTask from './DialogAddTask';
+import {
+  Typography,
+  Fab,
+} from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+
 const NAVIGATION = [
   {
     kind: 'header',
@@ -159,13 +166,43 @@ function CustomAppTitle() {
 
 
 
+
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
-
+  const [tasks, setTasks] = useState([]);
+  const [openDialogAddTask, setOpenDialogAddTask] = useState(false);
   const router = useDemoRouter('/dashboard');
 
   // Remove this const when copying and pasting into your project.
   const demoWindow = window ? window() : undefined;
+
+  function handleClick(param) {
+    setOpenDialogAddTask(param);
+  }
+
+  const addTask = (newTask) => {
+    const updatedTasks = [...tasks, newTask];
+    setTasks(updatedTasks);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+  };
+
+  function handleCompleted(completedTask) {
+    const updatedTasks = tasks.filter(task => task.title != completedTask.title);
+    setTasks(updatedTasks);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+  }
+
+  useEffect(() => { //ogni volta che lo stato si aggiorna, salva in locale
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks'));
+    if (savedTasks) setTasks(savedTasks);
+  }, []);
+
+  
+
 
   return (
     <AppProvider
@@ -192,8 +229,49 @@ export default function DashboardLayoutBasic(props) {
         }}
       >
         <PageContainer >
-          
+          <div>
+            {tasks.length === 0 ? (
+              <Typography variant="h4">No task available</Typography>
+            ) : (
+              <div className="box">
+                <div className="title"><Typography variant="h6">Today's tasks</Typography> </div>
+                {tasks.map((task, index) => (
+                  <div key={index} id="task">
+                    <div id="taskState">
+                      <input className="state-btn" type="checkbox" onChange={() => handleCompleted(task)} />
+                    </div>
+                    <div className="task-data">
+                      <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
+                      <Typography variant="body2">Date: {task.date ? task.date.format('YYYY-MM-DD') : 'No date selected'}</Typography>
+                      <Typography variant="body2">Category: {task.category}</Typography>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </PageContainer>
+
+        <Fab
+          aria-label="add"
+          sx={{
+            position: 'fixed', bottom: 24, right: 20, backgroundColor: '#34B3DB', color: '#FFFFFF',
+            '&:hover': {
+              backgroundColor: '#FFFFFF',
+              color: '#000000',
+            }
+          }}
+          onClick={handleClick}>
+          <AddIcon sx={{ fontSize: 60 }} />
+        </Fab>
+
+        {openDialogAddTask && (
+          <DialogAddTask
+            open={openDialogAddTask}
+            onClose={() => setOpenDialogAddTask(false)}
+            addTask={addTask}
+          />
+        )}
       </DashboardLayout>
     </AppProvider>
   );
