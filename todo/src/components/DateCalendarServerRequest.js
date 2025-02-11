@@ -107,6 +107,18 @@ export default function DateCalendarServerRequest() {
             highlightedDays,
           },
         }}
+        sx={{
+          width:'100%',
+          margin:'0 auto',
+          '& .MuiCalendarPicker-root': {
+            fontSize: '1.5rem',
+          },
+          '& .MuiPickersDay-day': {
+            fontSize: '1.5rem', 
+            width: '3rem',  
+            height: '3rem', 
+          },
+        }}
       />
     </LocalizationProvider>
   );
