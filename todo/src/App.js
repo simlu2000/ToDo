@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from './components/Navbar';
+import DashboardLayoutBasic from "./components/DashboardLayoutBasic";
 import GraphsScreen from './screens/GraphsScreen';
 import AboutScreen from './screens/AboutScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -25,14 +26,15 @@ function App() {
   }
   return (
     <Router>
-      <Navbar />
-      <Routes>
+      {/*<Navbar />*/}
+      <DashboardLayoutBasic />
+      { /*<Routes>
         <Route path="/" />
         <Route path="/graphs" element={<GraphsScreen />} />
         <Route path="/about" element={<AboutScreen />} />
         <Route path="/login" element={<LoginScreen />} />
       </Routes>
-      <Typography variant="h2" sx={{ marginLeft: '2%', marginTop: '2%' }}>Hi User, these are your tasks:</Typography>
+      */}
 
       <div id="tasksBox">
         {tasks.map((task, index) => (
@@ -47,13 +49,14 @@ function App() {
       <Fab
         aria-label="add"
         sx={{
-          position: 'fixed', bottom: 24, right: 20, backgroundColor: 'black',
+          position: 'fixed', bottom: 24, right: 20, backgroundColor: '#34B3DB', color:'#FFFFFF',
           '&:hover': {
-            backgroundColor: '#DF2935',
+            backgroundColor: '#FFFFFF',
+            color:'#000000',
           }
         }}
         onClick={handleClick}>
-        <AddIcon sx={{ fontSize: 50, color: 'white' }} />
+        <AddIcon sx={{ fontSize: 60}} />
       </Fab>
 
       {openDialogAddTask && (

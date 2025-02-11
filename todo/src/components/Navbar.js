@@ -22,10 +22,10 @@ function Navbar() {
             TODO
           </Typography>
           <Stack direction='row' spacing={8} sx={{ fontSize: 50}} >
-            <Button component={Link} to="/" color='inherit' style={{fontSize: '1.2rem'}}>TODO LIST</Button>
-            <Button component={Link} to="/graphs" color='inherit' style={{fontSize: '1.2rem'}}>GRAPHS</Button>
-            <Button component={Link} to="/about" color='inherit' style={{fontSize: '1.2rem'}}>ABOUT</Button>
-            <Button component={Link} to="/login" color='inherit' style={{fontSize: '1.2rem'}}>LOGIN</Button>
+            <Button component={Link} to="/" color='inherit' style={{fontSize: '1.2rem'}}>Dashboard</Button>
+            <Button component={Link} to="/graphs" color='inherit' style={{fontSize: '1.2rem'}}>Graphs</Button>
+            <Button component={Link} to="/about" color='inherit' style={{fontSize: '1.2rem'}}>About</Button>
+            <Button component={Link} to="/login" color='inherit' style={{fontSize: '1.2rem'}}>Login</Button>
           </Stack>
         </Toolbar>
       </AppBar>
