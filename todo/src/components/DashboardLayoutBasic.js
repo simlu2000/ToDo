@@ -9,23 +9,24 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
-import Grid from '@mui/material/Grid2';
 import todoLogo from '../utils/TODO.png';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
 import DialogAddTask from './DialogAddTask';
+import CalendarComponent from './Calendar';
 import {
   Typography,
   Fab,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-import DateCalendarServerRequest from './DateCalendarServerRequest'
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+dayjs.extend(isSameOrAfter);
 const NAVIGATION = [
   {
     kind: 'header',
@@ -48,24 +49,6 @@ const NAVIGATION = [
     kind: 'header',
     title: 'Manage',
   },
-  /*{
-    segment: 'reports',
-    title: 'Reports',
-    icon: <BarChartIcon />,
-    children: [
-      {
-        segment: 'sales',
-        title: 'Sales',
-        icon: <DescriptionIcon />,
-      },
-      {
-        segment: 'traffic',
-        title: 'Traffic',
-        icon: <DescriptionIcon />,
-      },
-    ],
-  }, 
-  */
   {
     segment: 'login',
     title: 'Login',
@@ -165,9 +148,6 @@ function CustomAppTitle() {
   );
 }
 
-
-
-
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
   const [tasks, setTasks] = useState([]);
@@ -193,18 +173,67 @@ export default function DashboardLayoutBasic(props) {
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));
   }
 
-  useEffect(() => { //ogni volta che lo stato si aggiorna, salva in locale
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
 
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks'));
     if (savedTasks) setTasks(savedTasks);
   }, []);
 
+  useEffect(() => {
+    // Ogni volta che lo stato delle task cambia, aggiorna il localStorage
+    if (tasks.length > 0) {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }, [tasks]);
 
+  const today = dayjs().startOf('day'); //oggi
+  const tomorrow = today.add(1, 'day').startOf('day');; //prendo today e aggiugno un giorno e parto da domani
 
+  //filtro tasks oggi
+  const todayTasks = tasks.filter(task => {
+    const taskDate = dayjs(task.date);
+    return taskDate.isValid() && taskDate.isSame(today, 'day');
+  });
 
+  //filtro tasks da domani in poi
+  const nextTasks = tasks.filter(task => {
+    const taskDate = dayjs(task.date);
+    return taskDate.isValid() && taskDate.isSameOrAfter(tomorrow, 'day');
+  });
+
+  const Box = styled('div')(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(68, 162, 191, 0.58)' : 'rgba(69, 167, 197, 0.47)',
+    marginLeft: '2%',
+    webkitBackdropFilter: 'blur(5px)',
+    backdropFilter: 'blur(10px)',
+    display: 'flex',
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+    borderRadius: '25px',
+    color: theme.palette.mode === 'light' ? '#000000' : '#FFFFFF',
+    marginTop: '5%',
+    boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)', 
+
+  }));
+
+  const Task = styled('div')(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(57, 133, 156, 0.17)' : 'rgba(238, 251, 255, 0.65)',
+    width: '96%',
+    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',  
+    borderRadius: '25px',
+    width: '96%',
+    padding: '15px',
+    margin: '1% auto',
+    display: 'flex',
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(5px)',
+    boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)', 
+  }));
+
+  
+  
   return (
     <AppProvider
       navigation={NAVIGATION}
@@ -230,40 +259,82 @@ export default function DashboardLayoutBasic(props) {
         }}
       >
         <PageContainer>
+          <div><CalendarComponent/></div>
           <div>
             {router.pathname === '/dashboard' && (
-              tasks.length === 0 ? (
-                <Typography variant="h5" color="#54D3DB">No task available</Typography>
-              ) : (
-                <div className={theme.palette.mode === "dark" ? "box box-dark" : "box box-light"}>
-                  <div className="title">
-                    <Typography variant="h6">Today's tasks</Typography>
-                  </div>
-                  {tasks.map((task, index) => (
-                    <div key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
-                      <div id="taskState">
-                        <input className="state-btn" type="checkbox" sx={{
-                          '&.Mui-checked': {
-                            color: '#FFFFFF',
-                          },
-                          color: '#FFFFFF',
-                        }} onChange={() => handleCompleted(task)} />
-                      </div>
-                      <div className="task-data">
-                        <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
-                        <Typography variant="body2">Date: {task.date ? task.date.format('YYYY-MM-DD') : 'No date selected'}</Typography>
-                        <Typography variant="body2">Category: {task.category}</Typography>
-                      </div>
+              <>
+                {/* TODAY */}
+                {nextTasks.length > 0 && (
+                  <Box>
+                    <div className="title">
+                      <Typography variant="h4">Today's tasks</Typography>
                     </div>
-                  ))}
-                </div>
-              )
+                    {todayTasks.map((task, index) => {
+                      const taskDate = dayjs(task.date);  
+                      return (
+                        <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
+                          <div id="taskState">
+                            <input
+                              className="state-btn"
+                              type="checkbox"
+                              sx={{
+                                '&.Mui-checked': {
+                                  color: '#FFFFFF',
+                                },
+                                color: '#FFFFFF',
+                              }}
+                              onChange={() => handleCompleted(task)}
+                            />
+                          </div>
+                          <div className="task-data">
+                            <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
+                            <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
+                            <Typography variant="body2">Category: {task.category}</Typography>
+                          </div>
+                        </Task>
+                      );
+                    })}
+                  </Box>
+                )}
+
+                {/* NEXT */}
+                {nextTasks.length > 0 && (
+                  <Box>
+                    <div className="title">
+                      <Typography variant="h4">Next tasks</Typography>
+                    </div>
+                    {nextTasks.map((task, index) => {
+                      const taskDate = dayjs(task.date);  
+                      return (
+                        <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
+                          <div id="taskState">
+                            <input
+                              className="state-btn"
+                              type="checkbox"
+                              sx={{
+                                '&.Mui-checked': {
+                                  color: '#FFFFFF',
+                                },
+                                color: '#FFFFFF',
+                              }}
+                              onChange={() => handleCompleted(task)}
+                            />
+                          </div>
+                          <div className="task-data">
+                            <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
+                            <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
+                            <Typography variant="body2">Category: {task.category}</Typography>
+                          </div>
+                        </Task>
+                      );
+                    })}
+                  </Box>
+                )}
+              </>
             )}
           </div>
 
-          <div>
-            <DateCalendarServerRequest/>
-          </div>
+
         </PageContainer>
 
 
