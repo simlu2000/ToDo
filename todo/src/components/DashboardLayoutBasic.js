@@ -27,6 +27,8 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import LineChartData from './LineChartData';
+import { isCookie } from 'react-router-dom';
 dayjs.extend(isSameOrAfter);
 const NAVIGATION = [
   {
@@ -155,6 +157,7 @@ export default function DashboardLayoutBasic(props) {
   const [openDialogAddTask, setOpenDialogAddTask] = useState(false);
   const router = useDemoRouter('/dashboard');
   const theme = useTheme(); //ottengo tema corrente
+  const [isCompleted, setIsCompleted] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const demoWindow = window ? window() : undefined;
 
@@ -163,17 +166,18 @@ export default function DashboardLayoutBasic(props) {
   }
 
   const addTask = (newTask) => {
-    const updatedTasks = [...tasks, newTask];
+    const updatedTask = { ...newTask, isCompleted: false };
+    const updatedTasks = [...tasks, updatedTask];
     setTasks(updatedTasks);
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));
   };
 
   function handleCompleted(completedTask) {
-    const updatedTasks = tasks.filter(task => task.title != completedTask.title);
+    const updatedTasks = tasks.map(task => task.title === completedTask.title ? { ...task, isCompleted: !task.isCompleted } : task);
     setTasks(updatedTasks);
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));
   }
-
+  
 
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks'));
@@ -210,9 +214,9 @@ export default function DashboardLayoutBasic(props) {
 
   const Box = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(245,245,245)',
-    background: theme.palette.mode === 'dark' ? '#8e0e00' : ' #c9d6ff',
-    background: theme.palette.mode === 'dark' ? '-webkit-linear-gradient(to top, #8e0e00,rgb(0, 0, 0))' : '-webkit-linear-gradient(to bottom, #c9d6ff, #e2e2e2)',
-    background: theme.palette.mode === 'dark' ? 'linear-gradient(to top,#8e0e00,rgb(0, 0, 0))' : 'linear-gradient(to bottom,rgba(119, 192, 214, 0.6), #c9d6ff, #e2e2e2)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: theme.palette.mode === 'dark' ? '#34b3db' : ' #c9d6ff',
+    background: theme.palette.mode === 'dark' ? '-webkit-linear-gradient(to top, #000000,rgb(0, 0, 0))' : '-webkit-linear-gradient(to bottom, #c9d6ff, #e2e2e2)',
+    background: theme.palette.mode === 'dark' ? 'linear-gradient(to top,#000000,rgb(0, 0, 0))' : 'linear-gradient(to bottom,rgba(119, 192, 214, 0.6), #c9d6ff, #e2e2e2)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     marginLeft: '2%',
     webkitBackdropFilter: 'blur(5px)',
     backdropFilter: 'blur(10px)',
@@ -241,7 +245,7 @@ export default function DashboardLayoutBasic(props) {
     WebkitBackdropFilter: 'blur(5px)',
     boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)',
   }));
-  
+
   const isNextTasksEmpty = nextTasks.length === 0;
 
   return (
@@ -274,48 +278,48 @@ export default function DashboardLayoutBasic(props) {
             {router.pathname === '/dashboard' && (
               <>
                 {/* TODAY */}
-                {nextTasks.length > 0 && (
-                  <Box>
-                    <div className="title">
-                      <Typography variant="h4">Today's tasks</Typography>
-                    </div>
-                    {todayTasks.map((task, index) => {
-                      const taskDate = dayjs(task.date);
-                      return (
-                        <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
-                          <div id="taskState">
-                            <input
-                              className="state-btn"
-                              type="checkbox"
-                              sx={{
-                                '&.Mui-checked': {
-                                  color: '#FFFFFF',
-                                },
+                <Box>
+                  <div className="title">
+                    <Typography variant="h4">Today's tasks</Typography>
+                  </div>
+                  {todayTasks.map((task, index) => {
+                    const taskDate = dayjs(task.date);
+                    return (
+                      <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
+                        <div id="taskState">
+                          <input
+                            className="state-btn"
+                            type="checkbox"
+                            checked={task.isCompleted}
+                            sx={{
+                              '&.Mui-checked': {
                                 color: '#FFFFFF',
-                              }}
-                              onChange={() => handleCompleted(task)}
-                            />
-                          </div>
-                          <div className="task-data">
-                            <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
-                            <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
-                            <Typography variant="body2">Category: {task.category}</Typography>
-                          </div>
-                        </Task>
-                      );
-                    })}
-                  </Box>
-                )}
+                              },
+                              color: '#FFFFFF',
+                            }}
+                            onChange={() => handleCompleted(task)}
+                          />
+                        </div>
+                        <div className="task-data">
+                          <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
+                          <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
+                          <Typography variant="body2">Category: {task.category}</Typography>
+                        </div>
+                      </Task>
+                    );
+                  })}
+                </Box>
+
 
                 {/* NEXT */}
-                  <Box>
-                    <div className="title">
-                      <Typography variant="h4">Next Tasks</Typography>
-                      <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
-                    </div>
+                <Box>
+                  <div className="title">
+                    <Typography variant="h4">Next Tasks</Typography>
+                    <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
+                  </div>
 
-                    {isNextTasksEmpty ? (
-                    <Typography variant="body1" color="error" sx={{ marginTop: 2, marginLeft:3 }}>
+                  {isNextTasksEmpty ? (
+                    <Typography variant="body1" color="#34b3db" sx={{ marginTop: 2, marginLeft: 3 }}>
                       No tasks available for the selected date.
                     </Typography>
                   ) : (
@@ -346,9 +350,14 @@ export default function DashboardLayoutBasic(props) {
                 </Box>
               </>
             )}
+
+            {router.pathname === '/graphs' && (
+
+              <div> <LineChartData tasks={tasks} /></div>
+
+            )}
           </div>
         </PageContainer>
-
 
         <Fab
           aria-label="add"

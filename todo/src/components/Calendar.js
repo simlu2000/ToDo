@@ -40,7 +40,7 @@ const CustomCalendar = styled('div')(({ theme }) => ({
     font: 'inherit',
     fontSize: '0.75em',
     fontWeight: 'bold',
-    color: theme.palette.mode === 'dark' ? '#df2935' : 'rgba(26, 52, 59, 0.65)',
+    color: theme.palette.mode === 'dark' ? '#34b3db' : 'rgba(26, 52, 59, 0.65)',
   },
   '& .react-calendar__tile': {
     backgroundColor: theme.palette.mode === 'dark' ? 'rgba(20,20,20)' : 'rgba(238, 251, 255, 0.65)',
@@ -55,8 +55,8 @@ const CustomCalendar = styled('div')(({ theme }) => ({
     position: 'relative',
   },
   '& .react-calendar__tile--now': {
-    background: 'rgba(10,10,10)',
-    color: '#FFFFFF',
+    background: theme.palette.mode === 'dark' ? '#000000' : '#FFFFFF',
+    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',
   },
   '& .react-calendar__tile--now:enabled:hover, .react-calendar__tile--now:enabled:focus': {
     background: '#ffffa9',
@@ -64,7 +64,7 @@ const CustomCalendar = styled('div')(({ theme }) => ({
   '& .task-dot': {
     height: '8px',
     width: '8px',
-    backgroundColor: theme.palette.mode === 'dark' ? '#ffba08' : '#df2935',
+    backgroundColor: theme.palette.mode === 'dark' ? '#34b3db' : '#df2935',
     borderRadius: '50%',
     position: 'absolute',
     bottom: '3px', 

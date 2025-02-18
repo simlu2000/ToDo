@@ -22,6 +22,7 @@ function DialogAddTask({ open, onClose, addTask }) {
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDate, setTaskDate] = useState(dayjs());
     const [taskCategory, setTaskCategory] = useState("");
+    const [isCompleted, setIsCompleted] = useState(false);
     const categories = ["Work", "Personal", "Shopping", "Study", "Health", "Other"];
     const handleSelectCategory = (category) => {
         setTaskCategory(category);
@@ -29,11 +30,12 @@ function DialogAddTask({ open, onClose, addTask }) {
 
     const handleAddTask = () => {
         if (taskTitle && taskDate && taskCategory) {
-            const newTask = { title: taskTitle, date: taskDate.format('YYYY-MM-DD'), category: taskCategory };
+            const newTask = { title: taskTitle, date: taskDate.format('YYYY-MM-DD'), category: taskCategory, isCompleted:false };
             addTask(newTask);
             setTaskTitle('');
             setTaskDate(dayjs());
             setTaskCategory('');
+            setIsCompleted(false);
             onClose();
         } else {
             console.log("Compila tutti i campi");
