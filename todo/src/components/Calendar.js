@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
+import dayjs from 'dayjs';
 
 const StyledCalendar = styled(Calendar)(({ theme }) => ({
   width: '100%',
   maxWidth: '100%',
-  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(68, 162, 191, 0.58)' : 'rgba(69, 167, 197, 0.47)',
+  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(69, 167, 197, 0.47)',
   backdropFilter: 'blur(5px)',
   WebkitBackdropFilter: 'blur(5px)',
   fontFamily: "'Arial', 'Helvetica', sans-serif",
@@ -23,7 +24,6 @@ const CustomCalendar = styled('div')(({ theme }) => ({
     marginRight: '5%',
     height: '40px',
     marginBottom: '1em',
-
   },
   '& .react-calendar button': {
     margin: 0,
@@ -32,8 +32,7 @@ const CustomCalendar = styled('div')(({ theme }) => ({
   },
   '& .react-calendar__navigation button': {
     minWidth: '44px',
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(68, 162, 191, 0.58)' : 'rgba(238, 251, 255, 0.65)',
-
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(238, 251, 255, 0.65)',
   },
   '& .react-calendar__month-view__weekdays': {
     textAlign: 'center',
@@ -41,49 +40,72 @@ const CustomCalendar = styled('div')(({ theme }) => ({
     font: 'inherit',
     fontSize: '0.75em',
     fontWeight: 'bold',
-    color: 'orangered',
-  },
-  '& .react-calendar__month-view__days__day--weekend': {
-    color: '#FF2525',
-  },
-  '& .react-calendar__month-view__days__day--neighboringMonth, .react-calendar__decade-view__years__year--neighboringDecade, .react-calendar__century-view__decades__decade--neighboringCentury': {
-    color: '#FF2525',
+    color: theme.palette.mode === 'dark' ? '#df2935' : 'rgba(26, 52, 59, 0.65)',
   },
   '& .react-calendar__tile': {
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(68, 162, 191, 0.58)' : 'rgba(238, 251, 255, 0.65)',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(20,20,20)' : 'rgba(238, 251, 255, 0.65)',
     backdropFilter: 'blur(5px)',
     WebkitBackdropFilter: 'blur(5px)',
     height: '40px',
-    margin: '25px',
-    width: '20px',
+    margin: '5px',
+    width: '40px', 
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
   '& .react-calendar__tile--now': {
-    background: '#FFFFFF',
-    color: '#000000',
+    background: 'rgba(10,10,10)',
+    color: '#FFFFFF',
   },
   '& .react-calendar__tile--now:enabled:hover, .react-calendar__tile--now:enabled:focus': {
     background: '#ffffa9',
   },
-  '& .task-counter': {
-    fontSize: '0.8rem',
+  '& .task-dot': {
+    height: '8px',
+    width: '8px',
+    backgroundColor: theme.palette.mode === 'dark' ? '#ffba08' : '#df2935',
+    borderRadius: '50%',
+    position: 'absolute',
+    bottom: '3px', 
   },
 }));
 
 const CalendarComponent = () => {
-  const theme = useTheme();  
+  const theme = useTheme();
+  const [tasks, setTasks] = useState({});
+
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks')) || {};
+    setTasks(savedTasks);
+  }, []);
+
+  const getTileContent = ({ date, view }) => {
+    if (view === 'month') {
+      const formattedDate = dayjs(date).format('YYYY-MM-DD');
+
+      if (Array.isArray(tasks)) {
+        const taskForTheDay = tasks.filter((task) => task.date === formattedDate);
+
+        if (taskForTheDay.length > 0) {
+          return <div className="task-dot"></div>; 
+        }
+      }
+    }
+    return null;
+  };
+
 
   return (
     <CustomCalendar>
       <StyledCalendar
-        locale="en-US"  
+        locale="en-US"
         tileClassName="react-calendar__tile"
         navigationClassName="react-calendar__navigation"
+        tileContent={getTileContent}
       />
     </CustomCalendar>
-  );
+  )
 }
 
 export default CalendarComponent;

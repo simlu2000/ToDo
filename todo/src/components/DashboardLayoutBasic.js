@@ -202,7 +202,10 @@ export default function DashboardLayoutBasic(props) {
   });
 
   const Box = styled('div')(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(68, 162, 191, 0.58)' : 'rgba(69, 167, 197, 0.47)',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(245,245,245)',
+    background: theme.palette.mode === 'dark' ? '#8e0e00' : ' #c9d6ff',
+    background: theme.palette.mode === 'dark' ? '-webkit-linear-gradient(to top, #8e0e00,rgb(0, 0, 0))' : '-webkit-linear-gradient(to bottom, #c9d6ff, #e2e2e2)',
+    background: theme.palette.mode === 'dark' ? 'linear-gradient(to top,#8e0e00,rgb(0, 0, 0))' : 'linear-gradient(to bottom,rgba(119, 192, 214, 0.6), #c9d6ff, #e2e2e2)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     marginLeft: '2%',
     webkitBackdropFilter: 'blur(5px)',
     backdropFilter: 'blur(10px)',
@@ -212,14 +215,14 @@ export default function DashboardLayoutBasic(props) {
     borderRadius: '25px',
     color: theme.palette.mode === 'light' ? '#000000' : '#FFFFFF',
     marginTop: '5%',
-    boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)', 
+    boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)',
 
   }));
 
   const Task = styled('div')(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(57, 133, 156, 0.17)' : 'rgba(238, 251, 255, 0.65)',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(20,20,20)' : 'rgba(255,255,255)',
     width: '96%',
-    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',  
+    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',
     borderRadius: '25px',
     width: '96%',
     padding: '15px',
@@ -229,11 +232,11 @@ export default function DashboardLayoutBasic(props) {
     flexDirection: 'row',
     backdropFilter: 'blur(10px)',
     WebkitBackdropFilter: 'blur(5px)',
-    boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)', 
+    boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)',
   }));
 
-  
-  
+
+
   return (
     <AppProvider
       navigation={NAVIGATION}
@@ -259,7 +262,7 @@ export default function DashboardLayoutBasic(props) {
         }}
       >
         <PageContainer>
-          <div><CalendarComponent/></div>
+          <div><CalendarComponent tasks={tasks || []} /></div>
           <div>
             {router.pathname === '/dashboard' && (
               <>
@@ -270,7 +273,7 @@ export default function DashboardLayoutBasic(props) {
                       <Typography variant="h4">Today's tasks</Typography>
                     </div>
                     {todayTasks.map((task, index) => {
-                      const taskDate = dayjs(task.date);  
+                      const taskDate = dayjs(task.date);
                       return (
                         <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
                           <div id="taskState">
@@ -304,7 +307,7 @@ export default function DashboardLayoutBasic(props) {
                       <Typography variant="h4">Next tasks</Typography>
                     </div>
                     {nextTasks.map((task, index) => {
-                      const taskDate = dayjs(task.date);  
+                      const taskDate = dayjs(task.date);
                       return (
                         <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
                           <div id="taskState">

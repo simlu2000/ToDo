@@ -29,13 +29,14 @@ function DialogAddTask({ open, onClose, addTask }) {
 
     const handleAddTask = () => {
         if (taskTitle && taskDate && taskCategory) {
-            const newTask = { title: taskTitle, date: taskDate, category: taskCategory };
-            console.log(newTask);
+            const newTask = { title: taskTitle, date: taskDate.format('YYYY-MM-DD'), category: taskCategory };
             addTask(newTask);
             setTaskTitle('');
             setTaskDate(dayjs());
             setTaskCategory('');
             onClose();
+        } else {
+            console.log("Compila tutti i campi");
         }
     };
 
