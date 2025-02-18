@@ -19,6 +19,7 @@ import { useTheme } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
 import DialogAddTask from './DialogAddTask';
 import CalendarComponent from './Calendar';
+import DatePicker from './DatePicker';
 import {
   Typography,
   Fab,
@@ -154,7 +155,7 @@ export default function DashboardLayoutBasic(props) {
   const [openDialogAddTask, setOpenDialogAddTask] = useState(false);
   const router = useDemoRouter('/dashboard');
   const theme = useTheme(); //ottengo tema corrente
-
+  const [selectedDate, setSelectedDate] = useState(dayjs());
   const demoWindow = window ? window() : undefined;
 
   function handleClick(param) {
@@ -198,8 +199,14 @@ export default function DashboardLayoutBasic(props) {
   //filtro tasks da domani in poi
   const nextTasks = tasks.filter(task => {
     const taskDate = dayjs(task.date);
-    return taskDate.isValid() && taskDate.isSameOrAfter(tomorrow, 'day');
+    //se data non selezionata prendi tutto da domani in poi
+    return taskDate.isValid() && taskDate.isSameOrAfter(selectedDate, 'day');
   });
+
+  //gestione selezione data
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  }
 
   const Box = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(245,245,245)',
@@ -234,8 +241,8 @@ export default function DashboardLayoutBasic(props) {
     WebkitBackdropFilter: 'blur(5px)',
     boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)',
   }));
-
-
+  
+  const isNextTasksEmpty = nextTasks.length === 0;
 
   return (
     <AppProvider
@@ -301,12 +308,18 @@ export default function DashboardLayoutBasic(props) {
                 )}
 
                 {/* NEXT */}
-                {nextTasks.length > 0 && (
                   <Box>
                     <div className="title">
-                      <Typography variant="h4">Next tasks</Typography>
+                      <Typography variant="h4">Next Tasks</Typography>
+                      <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
                     </div>
-                    {nextTasks.map((task, index) => {
+
+                    {isNextTasksEmpty ? (
+                    <Typography variant="body1" color="error" sx={{ marginTop: 2, marginLeft:3 }}>
+                      No tasks available for the selected date.
+                    </Typography>
+                  ) : (
+                    nextTasks.map((task, index) => {
                       const taskDate = dayjs(task.date);
                       return (
                         <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
@@ -315,9 +328,7 @@ export default function DashboardLayoutBasic(props) {
                               className="state-btn"
                               type="checkbox"
                               sx={{
-                                '&.Mui-checked': {
-                                  color: '#FFFFFF',
-                                },
+                                '&.Mui-checked': { color: '#FFFFFF' },
                                 color: '#FFFFFF',
                               }}
                               onChange={() => handleCompleted(task)}
@@ -330,14 +341,12 @@ export default function DashboardLayoutBasic(props) {
                           </div>
                         </Task>
                       );
-                    })}
-                  </Box>
-                )}
+                    })
+                  )}
+                </Box>
               </>
             )}
           </div>
-
-
         </PageContainer>
 
 
