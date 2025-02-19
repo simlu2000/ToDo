@@ -1,5 +1,8 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { extendTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+/*components*/
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import InfoIcon from '@mui/icons-material/Info';
@@ -9,27 +12,24 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
-import todoLogo from '../utils/TODO.png';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
-import PropTypes from 'prop-types';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Tooltip from '@mui/material/Tooltip';
-import { useTheme } from '@mui/material/styles';
-import { useState, useEffect } from 'react';
-import DialogAddTask from './DialogAddTask';
-import CalendarComponent from './Calendar';
 import DatePicker from './DatePicker';
-import {
-  Typography,
-  Fab,
-} from "@mui/material";
+import DialogAddTask from './DialogAddTask';
+import { Typography, Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import CalendarComponent from './Calendar';
+
+import todoLogo from '../utils/TODO.png';
+import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import LineChartData from './LineChartData';
-import { isCookie } from 'react-router-dom';
 dayjs.extend(isSameOrAfter);
+
+/*specifies the navigation with the dashboard layout of mui*/
 const NAVIGATION = [
   {
     kind: 'header',
@@ -78,6 +78,21 @@ const NAVIGATION = [
 
 ];
 
+function useDemoRouter(initialPath) {
+  const [pathname, setPathname] = React.useState(initialPath);
+
+  const router = React.useMemo(() => {
+    return {
+      pathname,
+      searchParams: new URLSearchParams(),
+      navigate: (path) => setPathname(String(path)),
+    };
+  }, [pathname]);
+
+  return router;
+}
+
+/*themes for the dashboard layout of mui*/
 const demoTheme = extendTheme({
   palette: {
     primary: {
@@ -102,20 +117,6 @@ const demoTheme = extendTheme({
     },
   },
 });
-
-function useDemoRouter(initialPath) {
-  const [pathname, setPathname] = React.useState(initialPath);
-
-  const router = React.useMemo(() => {
-    return {
-      pathname,
-      searchParams: new URLSearchParams(),
-      navigate: (path) => setPathname(String(path)),
-    };
-  }, [pathname]);
-
-  return router;
-}
 
 const Skeleton = styled('div')(({ theme, height }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -156,58 +157,63 @@ export default function DashboardLayoutBasic(props) {
   const [tasks, setTasks] = useState([]);
   const [openDialogAddTask, setOpenDialogAddTask] = useState(false);
   const router = useDemoRouter('/dashboard');
-  const theme = useTheme(); //ottengo tema corrente
+  const theme = useTheme(); //state of the current theme
   const [isCompleted, setIsCompleted] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedDate, setSelectedDate] = useState(dayjs()); //default selected date: today 
   const demoWindow = window ? window() : undefined;
 
-  function handleClick(param) {
+  function handleClick(param) { //manage the open of the adding tasks dialog
     setOpenDialogAddTask(param);
   }
 
-  const addTask = (newTask) => {
-    const updatedTask = { ...newTask, isCompleted: false };
-    const updatedTasks = [...tasks, updatedTask];
-    setTasks(updatedTasks);
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+  const addTask = (newTask) => { //adding task and save in localStorage
+    const updatedTask = { ...newTask, isCompleted: false }; //add a new task as not completed
+    const updatedTasks = [...tasks, updatedTask]; //add updatedtask as the last element of tasks
+    setTasks(updatedTasks); //update the state
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));  //save in local Storage with setItem()
   };
 
-  function handleCompleted(completedTask) {
-    const updatedTasks = tasks.map(task => task.title === completedTask.title ? { ...task, isCompleted: !task.isCompleted } : task);
-    setTasks(updatedTasks);
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+  function handleCompleted(completedTask) { //set the task completed when the user click the checked btn
+    const updatedTasks = tasks.map(task => task.title === completedTask.title ? { ...task, isCompleted: !task.isCompleted } : task); //insert the tasks in updated tasks whose title is the same of the completed task and set it as completed
+    setTasks(updatedTasks); //update the state
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks)); //save in localStorage 
   }
-  
 
-  useEffect(() => {
+
+  useEffect(() => { //every time the component is mounted, update the savedTasks and the related state
     const savedTasks = JSON.parse(localStorage.getItem('tasks'));
     if (savedTasks) setTasks(savedTasks);
   }, []);
 
   useEffect(() => {
-    // Ogni volta che lo stato delle task cambia, aggiorna il localStorage
+    //every time the state of the tasks change, update the tasks in localStorage
     if (tasks.length > 0) {
       localStorage.setItem('tasks', JSON.stringify(tasks));
     }
   }, [tasks]);
 
-  const today = dayjs().startOf('day'); //oggi
-  const tomorrow = today.add(1, 'day').startOf('day');; //prendo today e aggiugno un giorno e parto da domani
+  const today = dayjs().startOf('day'); //today
+  const tomorrow = today.add(1, 'day').startOf('day');; //i take today, add one day and start from that day (so from tomorrow)
 
-  //filtro tasks oggi
+  //filter today's tasks
   const todayTasks = tasks.filter(task => {
-    const taskDate = dayjs(task.date);
-    return taskDate.isValid() && taskDate.isSame(today, 'day');
+    const taskDate = dayjs(task.date); //date of the task
+    return taskDate.isValid() && taskDate.isSame(today, 'day'); //return the task if task date is valid and the date is the same of today
   });
 
-  //filtro tasks da domani in poi
+  //filter tasks from tomorrow
   const nextTasks = tasks.filter(task => {
-    const taskDate = dayjs(task.date);
-    //se data non selezionata prendi tutto da domani in poi
+    const taskDate = dayjs(task.date); //task date
+    //return the task if the date is valid and if the task date is the same or after the selected date (state)
     return taskDate.isValid() && taskDate.isSameOrAfter(selectedDate, 'day');
   });
 
-  //gestione selezione data
+  const completedTasks = tasks.filter(task => {
+    const taskDate = dayjs(task.date);
+    return taskDate.isValid() && task.isCompleted == true;
+  })
+
+  //state for data change
   const handleDateChange = (date) => {
     setSelectedDate(date);
   }
@@ -247,6 +253,7 @@ export default function DashboardLayoutBasic(props) {
   }));
 
   const isNextTasksEmpty = nextTasks.length === 0;
+  const isCompletedTasksEmpty = completedTasks.length === 0;
 
   return (
     <AppProvider
@@ -353,7 +360,46 @@ export default function DashboardLayoutBasic(props) {
 
             {router.pathname === '/graphs' && (
 
-              <div> <LineChartData tasks={tasks} /></div>
+              <div>
+                <LineChartData tasks={tasks} />
+                <Box>
+                  <div className="title">
+                    <Typography variant="h4">Completed tasks</Typography>
+                    <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
+                  </div>
+
+                  {isCompletedTasksEmpty ? (
+                    <Typography variant="body1" color="#34b3db" sx={{ marginTop: 2, marginLeft: 3 }}>
+                      No completed tasks.
+                    </Typography>
+                  ) : (
+                    completedTasks.map((task, index) => {
+                      const taskDate = dayjs(task.date);
+                      return (
+                        <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
+                          <div id="taskState">
+                            <input
+                              className="state-btn"
+                              type="checkbox"
+                              sx={{
+                                '&.Mui-checked': { color: '#FFFFFF' },
+                                color: '#FFFFFF',
+                              }}
+                              onChange={() => handleCompleted(task)}
+                            />
+                          </div>
+                          <div className="task-data">
+                            <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
+                            <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
+                            <Typography variant="body2">Category: {task.category}</Typography>
+                          </div>
+                        </Task>
+                      );
+                    })
+                  )}
+                </Box>
+              </div>
+
 
             )}
           </div>
