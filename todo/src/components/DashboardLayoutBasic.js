@@ -21,6 +21,7 @@ import DialogAddTask from './DialogAddTask';
 import { Typography, Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import CalendarComponent from './Calendar';
+import DeleteButton from './DeleteButton';
 
 import todoLogo from '../utils/TODO.png';
 import PropTypes from 'prop-types';
@@ -172,6 +173,13 @@ export default function DashboardLayoutBasic(props) {
     setTasks(updatedTasks); //update the state
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));  //save in local Storage with setItem()
   };
+
+  const deleteTask = (taskToDelete) => {
+    const updatedTasks = tasks.filter(task => task !== taskToDelete); //filter out the task to delete
+    setTasks(updatedTasks);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+  };
+
 
   function handleCompleted(completedTask) { //set the task completed when the user click the checked btn
     const updatedTasks = tasks.map(task => task.title === completedTask.title ? { ...task, isCompleted: !task.isCompleted } : task); //insert the tasks in updated tasks whose title is the same of the completed task and set it as completed
@@ -350,6 +358,7 @@ export default function DashboardLayoutBasic(props) {
                             <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
                             <Typography variant="body2">Category: {task.category}</Typography>
                           </div>
+                          <DeleteButton onDelete={() => deleteTask(task)}/>
                         </Task>
                       );
                     })
