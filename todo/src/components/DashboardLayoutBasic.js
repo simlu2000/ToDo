@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { extendTheme, styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
+/*icons*/
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+
 /*components*/
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PieChartIcon from '@mui/icons-material/PieChart';
@@ -29,6 +32,7 @@ import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import LineChartData from './LineChartData';
 dayjs.extend(isSameOrAfter);
+
 
 /*specifies the navigation with the dashboard layout of mui*/
 const NAVIGATION = [
@@ -228,17 +232,14 @@ export default function DashboardLayoutBasic(props) {
 
   const Box = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(245,245,245)',
-    background: theme.palette.mode === 'dark' ? '#34b3db' : ' #c9d6ff',
-    background: theme.palette.mode === 'dark' ? '-webkit-linear-gradient(to top, #000000,rgb(0, 0, 0))' : '-webkit-linear-gradient(to bottom, #c9d6ff, #e2e2e2)',
-    background: theme.palette.mode === 'dark' ? 'linear-gradient(to top,#000000,rgb(0, 0, 0))' : 'linear-gradient(to bottom,rgba(119, 192, 214, 0.6), #c9d6ff, #e2e2e2)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    marginLeft: '2%',
+     marginLeft: '2%',
     webkitBackdropFilter: 'blur(5px)',
     backdropFilter: 'blur(10px)',
     display: 'flex',
     alignItems: 'flex-start',
     flexDirection: 'column',
     borderRadius: '25px',
-    color: theme.palette.mode === 'light' ? '#000000' : '#FFFFFF',
+    color: theme.palette.mode === 'light' ? '#000000' : 'rgba(245,245,245)',
     marginTop: '5%',
     boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)',
 
@@ -320,6 +321,7 @@ export default function DashboardLayoutBasic(props) {
                           <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
                           <Typography variant="body2">Category: {task.category}</Typography>
                         </div>
+                        <DeleteButton onDelete={() => deleteTask(task)}/>
                       </Task>
                     );
                   })}
@@ -370,10 +372,12 @@ export default function DashboardLayoutBasic(props) {
             {router.pathname === '/graphs' && (
 
               <div>
-                <LineChartData tasks={tasks} />
+                <Box>
+                <LineChartData tasks={completedTasks} />
+                </Box>
                 <Box>
                   <div className="title">
-                    <Typography variant="h4">Completed tasks</Typography>
+                    <Typography variant="h4">Completed tasks <CheckCircleIcon color='success' fontSize="large"/></Typography>
                     <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
                   </div>
 
@@ -386,17 +390,6 @@ export default function DashboardLayoutBasic(props) {
                       const taskDate = dayjs(task.date);
                       return (
                         <Task key={index} className={theme.palette.mode === "dark" ? "task task-dark" : "task task-light"}>
-                          <div id="taskState">
-                            <input
-                              className="state-btn"
-                              type="checkbox"
-                              sx={{
-                                '&.Mui-checked': { color: '#FFFFFF' },
-                                color: '#FFFFFF',
-                              }}
-                              onChange={() => handleCompleted(task)}
-                            />
-                          </div>
                           <div className="task-data">
                             <Typography variant="h6">{task.title.charAt(0).toUpperCase() + String(task.title).slice(1)}</Typography>
                             <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>

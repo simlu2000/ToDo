@@ -6,8 +6,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 export default function DeleteButton({onDelete}) {
   return (
     <Stack direction="row" spacing={1}>
-      <IconButton aria-label="delete">
-        <DeleteIcon onClick={onDelete}/>
+      <IconButton aria-label="delete" size="large" sx={{color:'error.main'}}>
+        <DeleteIcon onClick={onDelete} fontSize="inherit"/>
       </IconButton>
     </Stack>
   );

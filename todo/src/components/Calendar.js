@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 const StyledCalendar = styled(Calendar)(({ theme }) => ({
   width: '100%',
   maxWidth: '100%',
-  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(69, 167, 197, 0.47)',
+  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(235,235,235)',
   backdropFilter: 'blur(5px)',
   WebkitBackdropFilter: 'blur(5px)',
   fontFamily: "'Arial', 'Helvetica', sans-serif",
@@ -32,7 +32,7 @@ const CustomCalendar = styled('div')(({ theme }) => ({
   },
   '& .react-calendar__navigation button': {
     minWidth: '44px',
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(238, 251, 255, 0.65)',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(245,245,245)',
   },
   '& .react-calendar__month-view__weekdays': {
     textAlign: 'center',
@@ -43,7 +43,7 @@ const CustomCalendar = styled('div')(({ theme }) => ({
     color: theme.palette.mode === 'dark' ? '#34b3db' : 'rgba(26, 52, 59, 0.65)',
   },
   '& .react-calendar__tile': {
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(20,20,20)' : 'rgba(238, 251, 255, 0.65)',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(20,20,20)' : '#FFFFFF',
     backdropFilter: 'blur(5px)',
     WebkitBackdropFilter: 'blur(5px)',
     height: '40px',
