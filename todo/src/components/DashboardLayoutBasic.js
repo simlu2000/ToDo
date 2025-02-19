@@ -150,9 +150,9 @@ function CustomAppTitle() {
       <img style={{ width: '3rem' }} src={todoLogo} />
       <Typography variant="h6">ToDo</Typography>
       <Chip size="small" label="BETA" color="info" />
-      <Tooltip title="Connected to production">
+      {/*<Tooltip title="Connected to production">
         <CheckCircleIcon color="success" fontSize="small" />
-      </Tooltip>
+      </Tooltip>*/}
     </Stack>
   );
 }

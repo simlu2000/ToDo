@@ -1,44 +1,43 @@
-import * as React from 'react';
-import { LineChart } from '@mui/x-charts/LineChart';
+import React, { useEffect, useState } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import dayjs from 'dayjs';
 
-export default function LineChartData({ tasks }) {
-    const today = dayjs();
-    const lastWeek = today.subtract(7, 'day');
+const LineChartData = ({ tasks }) => {
+  const [data, setData] = useState([]);
 
-    const data = tasks
-        .filter(task => task.date && dayjs(task.date).isValid() && dayjs(task.date).isAfter(lastWeek))
-        .map(task => ({
-            date: dayjs(task.date).format('YYYY-MM-DD'),
-            completed: task.isCompleted ? 1 : 0, // Or: completed: Boolean(task.isCompleted) ? 1 : 0
-        }))
-        .reduce((acc, cur) => {
-            const existing = acc.find(item => item.date === cur.date);
-            if (existing) {
-                existing.completed += cur.completed;
-            } else {
-                acc.push(cur);
-            }
-            return acc;
-        }, []);
+  useEffect(() => {
+    //attività completate negli ultimi 7 giorni
+    const today = dayjs().startOf('day');
+    const lastWeek = Array.from({ length: 7 }).map((_, i) => today.subtract(i, 'day'));
 
-    const dates = data.map(item => item.date);
-    const completions = data.map(item => item.completed);
+    const completedTasksPerDay = lastWeek.map(date => {
+      const dayTasks = tasks.filter(task => {
+        const taskDate = dayjs(task.date);
+        return taskDate.isValid() && taskDate.isSame(date, 'day') && task.isCompleted;
+      });
+      return { date: date.format('YYYY-MM-DD'), completed: dayTasks.length };
+    }).reverse();
 
-    console.log("Data:", data); // Debugging
-    console.log("Dates:", dates); // Debugging
-    console.log("Completions:", completions); // Debugging
+    setData(completedTasksPerDay);
+  }, [tasks]);
 
-    if (data.length === 0) {
-        return <div>No data to display</div>;
-    }
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart
+        data={data}
+        margin={{
+          top: 5, right: 30, left: 20, bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="completed" stroke="#ffba08" activeDot={{ r: 8 }} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+};
 
-    return (
-        <LineChart
-            xAxis={[{ data: dates }]}
-            series={[{ data: completions }]}
-            width={500}
-            height={300}
-        />
-    );
-}
+export default LineChartData;
