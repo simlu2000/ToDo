@@ -393,13 +393,31 @@ export default function DashboardLayoutBasic(props) {
                   {lastWeek.format('dddd DD MMM')} &nbsp; - &nbsp; {today.format('dddd DD MMM')} :
                   </Typography>
                 <Box>
-                  <PieChartCategoriesData tasks={completedTasks} />
-                </Box>
-                <Box>
-                  <LineChartData tasks={completedTasks} />
-                </Box>
-                <Box>
+                {isCompletedTasksEmpty ? (
+                    <Typography variant="body1" color="#34b3db" sx={{ marginTop: 2, marginLeft: 3 }}>
+                      No completed tasks.
+                    </Typography>
+                  ) : (
                   <PieChartTasksData tasks={completedTasks} />
+                  )}
+                </Box>
+                <Box>
+                {isCompletedTasksEmpty ? (
+                    <Typography variant="body1" color="#34b3db" sx={{ marginTop: 2, marginLeft: 3 }}>
+                      No completed tasks.
+                    </Typography>
+                  ) : (
+                  <LineChartData tasks={completedTasks} />
+                  )}
+                </Box>
+                <Box>
+                {isCompletedTasksEmpty ? (
+                    <Typography variant="body1" color="#34b3db" sx={{ marginTop: 2, marginLeft: 3 }}>
+                      No completed tasks.
+                    </Typography>
+                  ) : (
+                  <PieChartCategoriesData tasks={completedTasks} />
+                  )}
                 </Box>
                 <Box>
                   <div className="title">
