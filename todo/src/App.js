@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from './components/Navbar';
 import DashboardLayoutBasic from "./components/DashboardLayoutBasic";
 import GraphsScreen from './screens/GraphsScreen';
 import AboutScreen from './screens/AboutScreen';
