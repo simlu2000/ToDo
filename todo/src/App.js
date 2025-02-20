@@ -16,13 +16,13 @@ function App() {
     <Router>
       {/*<Navbar />*/}
       <DashboardLayoutBasic />
-      { /*<Routes>
+      <Routes>
         <Route path="/" />
-        <Route path="/graphs" element={<GraphsScreen />} />
+        {/*<Route path="/graphs" element={<GraphsScreen />} />
         <Route path="/about" element={<AboutScreen />} />
-        <Route path="/login" element={<LoginScreen />} />
+        <Route path="/login" element={<LoginScreen />} />*/}
       </Routes>
-      */}
+      
 
       
 
