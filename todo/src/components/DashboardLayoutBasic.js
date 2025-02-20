@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { extendTheme, styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import { Outlet } from "react-router-dom";
 
 /*icons*/
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
@@ -458,9 +457,6 @@ export default function DashboardLayoutBasic(props) {
           />
         )}
       </DashboardLayout>
-      <div><Outlet /></div>
     </AppProvider>
-
   );
-  
 }
