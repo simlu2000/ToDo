@@ -31,6 +31,8 @@ import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import LineChartData from './LineChartData';
+import PieChartCategoriesData from './PieChartCategoriesData';
+import PieChartTasksData from './PieChartTasksData';
 dayjs.extend(isSameOrAfter);
 
 
@@ -232,7 +234,7 @@ export default function DashboardLayoutBasic(props) {
 
   const Box = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(245,245,245)',
-     marginLeft: '2%',
+    marginLeft: '2%',
     webkitBackdropFilter: 'blur(5px)',
     backdropFilter: 'blur(10px)',
     display: 'flex',
@@ -261,8 +263,25 @@ export default function DashboardLayoutBasic(props) {
     boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)',
   }));
 
+  const ChartsBox = styled('div')(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(10,10,10)' : 'rgba(245,245,245)',
+    marginLeft: '2%',
+    webkitBackdropFilter: 'blur(5px)',
+    backdropFilter: 'blur(10px)',
+    display: 'flex',
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    borderRadius: '25px',
+    color: theme.palette.mode === 'light' ? '#000000' : 'rgba(245,245,245)',
+    marginTop: '5%',
+    boxShadow: theme.palette.mode === 'dark' ? '0 4px 10px rgba(0, 0, 0, 0.6)' : '0 4px 10px rgba(0, 0, 0, 0.1)',
+
+  }));
+
+
   const isNextTasksEmpty = nextTasks.length === 0;
   const isCompletedTasksEmpty = completedTasks.length === 0;
+  const lastWeek = today.subtract(7, 'day');
 
   return (
     <AppProvider
@@ -285,8 +304,8 @@ export default function DashboardLayoutBasic(props) {
         slots={{
           appTitle: CustomAppTitle,
           sidebarFooter: SidebarFooter,
-
         }}
+        
       >
         <PageContainer>
           <div><CalendarComponent tasks={tasks || []} /></div>
@@ -296,7 +315,7 @@ export default function DashboardLayoutBasic(props) {
                 {/* TODAY */}
                 <Box>
                   <div className="title">
-                    <Typography variant="h4">Today's tasks</Typography>
+                    <Typography variant="h5">Today's tasks</Typography>
                   </div>
                   {todayTasks.map((task, index) => {
                     const taskDate = dayjs(task.date);
@@ -321,7 +340,7 @@ export default function DashboardLayoutBasic(props) {
                           <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
                           <Typography variant="body2">Category: {task.category}</Typography>
                         </div>
-                        <DeleteButton onDelete={() => deleteTask(task)}/>
+                        <DeleteButton onDelete={() => deleteTask(task)} />
                       </Task>
                     );
                   })}
@@ -331,7 +350,7 @@ export default function DashboardLayoutBasic(props) {
                 {/* NEXT */}
                 <Box>
                   <div className="title">
-                    <Typography variant="h4">Next Tasks</Typography>
+                    <Typography variant="h5">Next Tasks</Typography>
                     <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
                   </div>
 
@@ -360,7 +379,7 @@ export default function DashboardLayoutBasic(props) {
                             <Typography variant="body2">Date: {taskDate.isValid() ? taskDate.format('YYYY-MM-DD') : 'Invalid date'}</Typography>
                             <Typography variant="body2">Category: {task.category}</Typography>
                           </div>
-                          <DeleteButton onDelete={() => deleteTask(task)}/>
+                          <DeleteButton onDelete={() => deleteTask(task)} />
                         </Task>
                       );
                     })
@@ -372,12 +391,21 @@ export default function DashboardLayoutBasic(props) {
             {router.pathname === '/graphs' && (
 
               <div>
+                <Typography sx={{ marginTop: '5%', marginLeft: '2%', marginBottom: '2%' }} variant="h5">
+                  {lastWeek.format('dddd DD MMM')} &nbsp; - &nbsp; {today.format('dddd DD MMM')} :
+                  </Typography>
                 <Box>
-                <LineChartData tasks={completedTasks} />
+                  <PieChartCategoriesData tasks={completedTasks} />
+                </Box>
+                <Box>
+                  <LineChartData tasks={completedTasks} />
+                </Box>
+                <Box>
+                  <PieChartTasksData tasks={completedTasks} />
                 </Box>
                 <Box>
                   <div className="title">
-                    <Typography variant="h4">Completed tasks <CheckCircleIcon color='success' fontSize="large"/></Typography>
+                    <Typography sx={{ marginBottom: '2%' }} variant="h5">Completed tasks</Typography>
                     <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
                   </div>
 
@@ -410,7 +438,7 @@ export default function DashboardLayoutBasic(props) {
         <Fab
           aria-label="add"
           sx={{
-            position: 'fixed', bottom: 24, right: 20, backgroundColor: '#34B3DB', color: '#FFFFFF',
+            position: 'fixed', bottom: 25, right: 50, backgroundColor: '#34B3DB', color: '#FFFFFF',
             '&:hover': {
               backgroundColor: '#FFFFFF',
               color: '#000000',
