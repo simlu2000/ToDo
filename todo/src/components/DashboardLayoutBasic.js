@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { extendTheme, styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 
-/*icons*/
+/*mui icons*/
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
 /*components*/
