@@ -1,16 +1,10 @@
-import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState,} from "react";
+import { BrowserRouter as Router} from "react-router-dom";
 import DashboardLayoutBasic from "./components/DashboardLayoutBasic";
-import GraphsScreen from './screens/GraphsScreen';
-import AboutScreen from './screens/AboutScreen';
-import LoginScreen from './screens/LoginScreen';
 import './style/home_style.css';
 
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  
-
   return (
     <Router>
       {/*<Navbar />*/}
@@ -22,9 +16,6 @@ function App() {
         <Route path="/login" element={<LoginScreen />} />
       </Routes>
       */}
-
-      
-
     </Router>
   );
 }

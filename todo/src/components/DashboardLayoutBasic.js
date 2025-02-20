@@ -2,8 +2,6 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { extendTheme, styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-/*icons*/
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
 /*components*/
 import DashboardIcon from '@mui/icons-material/Dashboard';
