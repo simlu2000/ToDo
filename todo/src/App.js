@@ -13,21 +13,16 @@ function App() {
   
 
   return (
-    <Router>
-      {/*<Navbar />*/}
-      <DashboardLayoutBasic />
-      <Routes>
-        <Route path="/" />
-        {/*<Route path="/graphs" element={<GraphsScreen />} />
-        <Route path="/about" element={<AboutScreen />} />
-        <Route path="/login" element={<LoginScreen />} />*/}
-      </Routes>
-      
-
-      
-
-    </Router>
-  );
-}
-
+        <Router>
+          <DashboardLayoutBasic>
+            <Routes>
+              <Route path="/" element={<DashboardLayoutBasic />} />
+              <Route path="/graphs" element={<GraphsScreen />} />
+              <Route path="/about" element={<AboutScreen />} />
+              <Route path="/login" element={<LoginScreen />} />
+            </Routes>
+          </DashboardLayoutBasic>
+        </Router>
+      );
+    }
 export default App;
