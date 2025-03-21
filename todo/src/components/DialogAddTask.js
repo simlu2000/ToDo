@@ -48,7 +48,7 @@ function DialogAddTask({ open, onClose, addTask }) {
                 open={open}
                 onClose={onClose}
                 fullWidth
-                maxWidth="md" //available options: xs, sm, md, lg, xl
+                maxWidth="md" //fontsize: xs, sm, md, lg, xl
                 sx={{
                     '& .MuiDialog-paper': {  //style for dialog wrap
                         width: 'auto',

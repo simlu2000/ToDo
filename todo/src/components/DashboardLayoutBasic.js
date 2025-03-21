@@ -7,19 +7,14 @@ import { useTheme } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import InfoIcon from '@mui/icons-material/Info';
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
+import { Typography, Fab } from "@mui/material";
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Tooltip from '@mui/material/Tooltip';
 import DatePicker from './DatePicker';
 import DialogAddTask from './DialogAddTask';
-import { Typography, Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import CalendarComponent from './Calendar';
 import DeleteButton from './DeleteButton';
@@ -34,7 +29,7 @@ import PieChartTasksData from './PieChartTasksData';
 dayjs.extend(isSameOrAfter);
 
 
-/*specifies the navigation with the dashboard layout of mui*/
+/*navigazione con la barra navigazione layout dashboard*/
 const NAVIGATION = [
   {
     kind: 'header',
@@ -51,36 +46,10 @@ const NAVIGATION = [
     icon: <PieChartIcon />,
   },
   {
-    kind: 'divider',
-  },
-  {
-    kind: 'header',
-    title: 'Manage',
-  },
-  {
-    segment: 'login',
-    title: 'Login',
-    icon: <LoginIcon />,
-  },
-  {
-    segment: 'settings',
-    title: 'Settings',
-    icon: <SettingsIcon />,
-  },
-  {
     segment: 'about',
     title: 'About',
     icon: <InfoIcon />,
   },
-  {
-    kind: 'divider',
-  },
-  {
-    segment: 'logout',
-    title: 'Logout',
-    icon: <LogoutIcon />,
-  },
-
 ];
 
 function useDemoRouter(initialPath) {
@@ -97,7 +66,7 @@ function useDemoRouter(initialPath) {
   return router;
 }
 
-/*themes for the dashboard layout of mui*/
+/*tema layout dashboard mui*/
 const demoTheme = extendTheme({
   palette: {
     primary: {
@@ -150,9 +119,6 @@ function CustomAppTitle() {
       <img style={{ width: '3rem' }} src={todoLogo} />
       <Typography variant="h6">ToDo</Typography>
       <Chip size="small" label="BETA" color="info" />
-      {/*<Tooltip title="Connected to production">
-        <CheckCircleIcon color="success" fontSize="small" />
-      </Tooltip>*/}
     </Stack>
   );
 }
@@ -162,70 +128,69 @@ export default function DashboardLayoutBasic(props) {
   const [tasks, setTasks] = useState([]);
   const [openDialogAddTask, setOpenDialogAddTask] = useState(false);
   const router = useDemoRouter('/dashboard');
-  const theme = useTheme(); //state of the current theme
+  const theme = useTheme(); //stato tema mui corrente
   const [isCompleted, setIsCompleted] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(dayjs()); //default selected date: today 
+  const [selectedDate, setSelectedDate] = useState(dayjs()); //oggi come data default
   const demoWindow = window ? window() : undefined;
 
-  function handleClick(param) { //manage the open of the adding tasks dialog
+  function handleClick(param) { //per apertura dialog aggiunta task
     setOpenDialogAddTask(param);
   }
 
-  const addTask = (newTask) => { //adding task and save in localStorage
-    const updatedTask = { ...newTask, isCompleted: false }; //add a new task as not completed
-    const updatedTasks = [...tasks, updatedTask]; //add updatedtask as the last element of tasks
-    setTasks(updatedTasks); //update the state
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));  //save in local Storage with setItem()
+  const addTask = (newTask) => { //aggiunta task
+    const updatedTask = { ...newTask, isCompleted: false }; //nuova task non ancora completata
+    const updatedTasks = [...tasks, updatedTask]; //aggiungo nuova task in fondo
+    setTasks(updatedTasks); //aggiorno stato
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));  //salvo in localStorage
   };
 
   const deleteTask = (taskToDelete) => {
-    const updatedTasks = tasks.filter(task => task !== taskToDelete); //filter out the task to delete
+    const updatedTasks = tasks.filter(task => task !== taskToDelete); //filtro tasks prendendo quelle != task da eliminare
     setTasks(updatedTasks);
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));
   };
 
 
-  function handleCompleted(completedTask) { //set the task completed when the user click the checked btn
-    const updatedTasks = tasks.map(task => task.title === completedTask.title ? { ...task, isCompleted: !task.isCompleted } : task); //insert the tasks in updated tasks whose title is the same of the completed task and set it as completed
-    setTasks(updatedTasks); //update the state
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks)); //save in localStorage 
+  function handleCompleted(completedTask) { //per settare una task come completata
+    const updatedTasks = tasks.map(task => task.title === completedTask.title ? { ...task, isCompleted: !task.isCompleted } : task);  //se corrisponde imposto completata
+    setTasks(updatedTasks); 
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks)); 
   }
 
 
-  useEffect(() => { //every time the component is mounted, update the savedTasks and the related state
+  useEffect(() => { //ogni volta che il componente viene montato, prendo le tasks e imposto stato
     const savedTasks = JSON.parse(localStorage.getItem('tasks'));
     if (savedTasks) setTasks(savedTasks);
   }, []);
 
-  useEffect(() => {
-    //every time the state of the tasks change, update the tasks in localStorage
+  useEffect(() => { //ogni volta che le tasks vengono aggiornate
     if (tasks.length > 0) {
       localStorage.setItem('tasks', JSON.stringify(tasks));
     }
   }, [tasks]);
 
-  const today = dayjs().startOf('day'); //today
-  const tomorrow = today.add(1, 'day').startOf('day');; //i take today, add one day and start from that day (so from tomorrow)
+  const today = dayjs().startOf('day'); //oggi
+  const tomorrow = today.add(1, 'day').startOf('day');; //prendo oggi, aggiungo 1 giorno -> da li in poi = tomorrow
 
-  //filter today's tasks
+  //filtro task oggi
   const todayTasks = tasks.filter(task => {
-    const taskDate = dayjs(task.date); //date of the task
-    return taskDate.isValid() && taskDate.isSame(today, 'day'); //return the task if task date is valid and the date is the same of today
+    const taskDate = dayjs(task.date); 
+    return taskDate.isValid() && taskDate.isSame(today, 'day'); //ritorno se data valida ed è oggi
   });
 
-  //filter tasks from tomorrow
+  //filtro task da domani
   const nextTasks = tasks.filter(task => {
-    const taskDate = dayjs(task.date); //task date
-    //return the task if the date is valid and if the task date is the same or after the selected date (state)
+    const taskDate = dayjs(task.date); 
     return taskDate.isValid() && taskDate.isSameOrAfter(selectedDate, 'day');
   });
 
+  //task completate
   const completedTasks = tasks.filter(task => {
     const taskDate = dayjs(task.date);
     return taskDate.isValid() && task.isCompleted == true;
   })
 
-  //state for data change
+  //stato cambio data
   const handleDateChange = (date) => {
     setSelectedDate(date);
   }
@@ -279,7 +244,7 @@ export default function DashboardLayoutBasic(props) {
 
   const isNextTasksEmpty = nextTasks.length === 0;
   const isCompletedTasksEmpty = completedTasks.length === 0;
-  const lastWeek = today.subtract(7, 'day');
+  const lastWeek = today.subtract(7, 'day'); //ultima settimana (oggi - 7 giorni)
 
   return (
     <AppProvider
@@ -292,10 +257,6 @@ export default function DashboardLayoutBasic(props) {
       router={router}
       theme={demoTheme}
       window={demoWindow}
-
-    /*session={session}
-    authentication={authentication}*/
-
     >
       <DashboardLayout
         defaultSidebarCollapsed
@@ -310,7 +271,7 @@ export default function DashboardLayoutBasic(props) {
           <div>
             {router.pathname === '/dashboard' && (
               <>
-                {/* TODAY */}
+                {/* oggi */}
                 <Box>
                   <div className="title">
                     <Typography variant="h5">Today's tasks</Typography>
@@ -345,7 +306,7 @@ export default function DashboardLayoutBasic(props) {
                 </Box>
 
 
-                {/* NEXT */}
+                {/* da domani */}
                 <Box>
                   <div className="title">
                     <Typography variant="h5">Next Tasks</Typography>
@@ -386,6 +347,7 @@ export default function DashboardLayoutBasic(props) {
               </>
             )}
 
+            {/*per sezione/pagina grafici*/}
             {router.pathname === '/graphs' && (
 
               <div>
@@ -464,6 +426,7 @@ export default function DashboardLayoutBasic(props) {
           <AddIcon sx={{ fontSize: 60 }} />
         </Fab>
 
+          {/*dialog aggiunta task*/}
         {openDialogAddTask && (
           <DialogAddTask
             open={openDialogAddTask}
